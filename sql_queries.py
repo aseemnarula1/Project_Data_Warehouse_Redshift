@@ -5,6 +5,11 @@ import configparser
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
+LOG_DATA  = config.get("S3", "LOG_DATA")
+LOG_PATH  = config.get("S3", "LOG_JSONPATH")
+SONG_DATA = config.get("S3", "SONG_DATA")
+IAM_ROLE  = config.get("IAM_ROLE","ARN")
+
 # DROP TABLES
 
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
@@ -72,11 +77,11 @@ CREATE TABLE songplays
 (
 
         songplay_id         INTEGER IDENTITY(0,1) PRIMARY KEY,
-        start_time          TIMESTTAMP NOT NULL sortkey distkey,
+        start_time          TIMESTAMP NOT NULL sortkey distkey,
         user_id             INTEGER NOT NULL,
         level               VARCHAR(50),
         song_id             VARCHAR(500) NOT NULL,
-        artist_id           VARCHAR(500 NOT NULL,
+        artist_id           VARCHAR(500) NOT NULL,
         session_id          INTEGER,
         location            VARCHAR(500),
         user_agent          VARCHAR(500)
@@ -110,7 +115,7 @@ CREATE TABLE songs
         title             VARCHAR(500) NOT NULL,
         artist_id         VARCHAR(500) NOT NULL,
         year              INTEGER,
-        duration          DOUBLE NOT NULL
+        duration          FLOAT NOT NULL
 )
 
 """)
@@ -158,6 +163,10 @@ staging_events_copy = ("""
     timeformat   as 'epochmillisecs'
 
 """).format(bucket=LOG_DATA, role=IAM_ROLE, path=LOG_PATH)
+#format( config.get( 'S3','LOG_DATA'), 
+#              config.get('IAM_ROLE', 'ARN'),
+#              config.get('S3', 'LOG_JSONPATH'))
+#.format(bucket=LOG_DATA, role=IAM_ROLE, path=LOG_PATH)
 
 # Staging Songs Copy Table
 
@@ -169,6 +178,10 @@ staging_songs_copy = ("""
     format       as JSON 'auto'
 
 """).format(bucket=SONG_DATA, role=IAM_ROLE)
+#.format( config.get( 'S3','LOG_DATA'), 
+#              config.get('IAM_ROLE', 'ARN'),
+#              config.get('S3', 'LOG_JSONPATH'))
+#.format(bucket=SONG_DATA, role=IAM_ROLE)
 
 # Songplay Table Insert Statements
 
@@ -218,14 +231,14 @@ INSERT INTO users
         ,se3.gender
         ,se3.level
     FROM    (   SELECT  se.userid
-                        ,MAX(se.ts) as  ts_max
+                        ,MAX(se.ts) as  max_time_stamp
                 FROM    staging_events se
                 WHERE   se.page =   'NextSong'
                 GROUP BY    se.userid
 
             )   se2
     JOIN    staging_events  se3 ON  se3.userid  =   se2.userid
-                                AND se3.ts      =   se2.ts_max
+                                AND se3.ts      =   se2.max_time_stamp
                                 AND se3.page    =   'NextSong'
 
 """)
@@ -240,12 +253,14 @@ INSER INTO songs
       ,artist_id
       ,year
       ,duration
-    )SELECT ss.song_id
+    ) SELECT 
+         ss.song_id
         ,ss.title
         ,ss.artist_id
         ,ss.year
         ,ss.duration
-    FROM    staging_songs   ss
+      FROM    
+      staging_songs ss
 
 """)
 
@@ -273,7 +288,7 @@ INSERT INTO artists
 
 time_table_insert = ("""
 
-INSERT INTO dim_time
+INSERT INTO time
     (   start_time
         ,hour
         ,day
