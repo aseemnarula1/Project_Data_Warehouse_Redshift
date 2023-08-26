@@ -235,18 +235,19 @@ INSERT INTO songplays
         ,location
         ,user_agent
 )      
-SELECT   se.ts
-        ,se.userid
-        ,se.level
-        ,ss.song_id
-        ,ss.artist_id
-        ,se.sessionid
-        ,se.location
-        ,se.useragent
+SELECT DISTINCT 
+       TIMESTAMP 'epoch' + se.ts * interval '1 second' AS start_time,
+        se.userid,
+        se.level,
+        ss.song_id,
+        ss.artist_id,
+        se.sessionid,
+        se.location,
+        se.useragent
 FROM    staging_events  se
 JOIN    staging_songs   ss  
 ON      ss.artist_name  =   se.artist
-AND     ss.title    =   se.song
+AND     se.page    =   'NextSong'
 
 
 """)
@@ -288,7 +289,7 @@ AND     se3.page    =   'NextSong'
 
 #Song Table Insert Statements
 
-print("Inserting data into the users table for page 'NextSong' ")
+print("Inserting data into the song table ")
 
 
 song_table_insert = ("""
@@ -345,25 +346,18 @@ print("Extracting the Hour, Day, Week, Month, Year, Day of the Week each separat
 
 time_table_insert = ("""
 
-INSERT INTO time
-    (   start_time
-        ,hour
-        ,day
-        ,week
-        ,month
-        ,year
-        ,weekday
-    )SELECT se2.ts
-            ,EXTRACT(HOUR  FROM se2.ts)
-            ,EXTRACT(DAY   FROM se2.ts)
-            ,EXTRACT(WEEK  FROM se2.ts)
-            ,EXTRACT(MONTH FROM se2.ts)
-            ,EXTRACT(YEAR  FROM se2.ts)
-            ,EXTRACT(DOW   FROM se2.ts)
-    FROM(   SELECT DISTINCT se.ts 
-            FROM        staging_events se
-            WHERE   se.page     =   'NextSong'
-        )   se2
+   INSERT INTO time 
+   
+    SELECT DISTINCT
+                    TIMESTAMP 'epoch' + ts * interval '1 second' AS start_time,
+                    EXTRACT (hour FROM start_time),
+                    EXTRACT (day FROM start_time),
+                    EXTRACT (week FROM start_time),
+                    EXTRACT (month FROM start_time),
+                    EXTRACT (year FROM start_time),
+                    EXTRACT (weekday FROM start_time)
+    FROM staging_events
+    WHERE ts IS NOT NULL
 
 """)
 

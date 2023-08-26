@@ -28,7 +28,7 @@ def main():
     print("Calling load staging table cluster connection")
     load_staging_tables(cur, conn)
     
-    print("Calling inser tables module")
+    print("Calling insert tables module")
     insert_tables(cur, conn)
     print("Closing the cluster connection")
     
