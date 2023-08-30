@@ -115,7 +115,7 @@ e.g. SONG_DATA=’s3://udacity-dend/song_data/A/A/B’
  
 **Reference Links** —
 
-a) CREATE TABLE — Amazon Redshift
+a) CREATE TABLE — Amazon Redshift -https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_TABLE_NEW.html 
 
 b) S3 Bucket Filtering — https://docs.aws.amazon.com/macie/latest/user/monitoring-s3-inventory-filter.html
 
