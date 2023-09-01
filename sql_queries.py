@@ -368,7 +368,7 @@ time_table_insert = ("""
    INSERT INTO time 
    
     SELECT DISTINCT
-                    TIMESTAMP 'epoch' + ts * interval '1 second' AS start_time,
+                    TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS start_time,
                     EXTRACT (hour FROM start_time),
                     EXTRACT (day FROM start_time),
                     EXTRACT (week FROM start_time),
