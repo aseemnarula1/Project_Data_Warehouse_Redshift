@@ -129,6 +129,8 @@ f) COPY from S3 bucket format— https://docs.aws.amazon.com/redshift/latest/dg/
 
 g) VARCHAR(MAX) Characters - https://www.geeksforgeeks.org/varchar-varcharmax-and-nvarchar-in-ms-sql-server/
 
+h) Redshift Max Character — https://stackoverflow.com/questions/75562377/max-allowed-length-65535-of-varchar-column-in-redshift
+
 
 **Acknowledgement**
 
