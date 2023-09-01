@@ -127,6 +127,8 @@ e) Epoch Datetime — https://saturncloud.io/blog/how-to-convert-epoch-to-dateti
 
 f) COPY from S3 bucket format— https://docs.aws.amazon.com/redshift/latest/dg/copy-parameters-data-source-s3.html
 
+g) VARCHAR(MAX) Characters - https://www.geeksforgeeks.org/varchar-varcharmax-and-nvarchar-in-ms-sql-server/
+
 
 **Acknowledgement**
 
