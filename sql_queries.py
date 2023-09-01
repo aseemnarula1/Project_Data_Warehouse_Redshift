@@ -2,6 +2,24 @@ import configparser
 
 print("Entering the SQL_Queries module")
 
+'''
+
+Main Module Name - sql_queries.py
+
+Sub Module Name - config parser
+
+Sub Module Name Description - Takes the config read and pulls the values from the config files into the respective variables 
+e.g Log_data, log_path, song_data, iam_role
+
+Variables Details - 
+
+LOG_DATA  - stores the log data S3 bucket path
+LOG_PATH  - stores the log path S3 bucket for json format
+SONG_DATA - stores the songs data S3 bucket path
+IAM_ROLE  - stores IAM role and ARN details for the Amazon Redshift database
+
+'''
+
 # Config File 
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
