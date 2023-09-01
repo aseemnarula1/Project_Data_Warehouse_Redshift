@@ -72,7 +72,7 @@ CREATE TABLE staging_events
         page              VARCHAR(450),
         registration      VARCHAR(450),
         sessionId         INTEGER,
-        song              VARCHAR(MAX),
+        song              VARCHAR(65535),
         status            INTEGER,
         ts                BIGINT, 
         userAgent         VARCHAR(450), 
@@ -94,10 +94,10 @@ CREATE TABLE staging_songs
         artist_latitude    FLOAT,
         artist_longitude   FLOAT,
         artist_location    VARCHAR(450),
-        artist_name        VARCHAR(MAX),
+        artist_name        VARCHAR(65535),
         duration           FLOAT,
         num_songs          INT,
-        title              VARCHAR(MAX),
+        title              VARCHAR(65535),
         year               INT
 )
 
@@ -169,7 +169,7 @@ artist_table_create = ("""
 CREATE TABLE artists
 (
         artist_id         VARCHAR(500) PRIMARY KEY NOT NULL,
-        name              VARCHAR(MAX),
+        name              VARCHAR(65535),
         location          VARCHAR(500),
         latitude          VARCHAR(500),
         longitude         VARCHAR(500)
