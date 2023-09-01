@@ -72,7 +72,7 @@ CREATE TABLE staging_events
         page              VARCHAR(450),
         registration      VARCHAR(450),
         sessionId         INTEGER,
-        song              VARCHAR(450),
+        song              VARCHAR(MAX),
         status            INTEGER,
         ts                BIGINT, 
         userAgent         VARCHAR(450), 
@@ -89,15 +89,15 @@ staging_songs_table_create = ("""
 
 CREATE TABLE staging_songs
 (
-        song_id            VARCHAR(256) PRIMARY KEY,
+        song_id            VARCHAR(256),
         artist_id          VARCHAR(256),
         artist_latitude    FLOAT,
         artist_longitude   FLOAT,
         artist_location    VARCHAR(450),
-        artist_name        VARCHAR(256),
+        artist_name        VARCHAR(MAX),
         duration           FLOAT,
         num_songs          INT,
-        title              VARCHAR(500),
+        title              VARCHAR(MAX),
         year               INT
 )
 
@@ -169,7 +169,7 @@ artist_table_create = ("""
 CREATE TABLE artists
 (
         artist_id         VARCHAR(500) PRIMARY KEY NOT NULL,
-        name              VARCHAR(500),
+        name              VARCHAR(MAX),
         location          VARCHAR(500),
         latitude          VARCHAR(500),
         longitude         VARCHAR(500)
@@ -254,7 +254,7 @@ INSERT INTO songplays
         ,user_agent
 )      
 SELECT DISTINCT 
-       TIMESTAMP 'epoch' + se.ts * interval '1 second' AS start_time,
+       TIMESTAMP 'epoch' + se.ts/1000 * interval '1 second' AS start_time,
         se.userid,
         se.level,
         ss.song_id,
@@ -266,6 +266,7 @@ FROM    staging_events  se
 JOIN    staging_songs   ss  
 ON      ss.artist_name  =   se.artist
 AND     se.page    =   'NextSong'
+AND     se.song     =    ss.title 
 
 
 """)
